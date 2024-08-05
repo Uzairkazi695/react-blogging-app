@@ -40,9 +40,9 @@ export class AuthService {
 
   async getCurrentUser() {
     try {
-      return this.account.get();
+      return await this.account.get();
     } catch (error) {
-      throw error;
+      console.log("Appwrite serive :: getCurrentUser :: error", error);
     }
     return null;
   }
@@ -51,7 +51,7 @@ export class AuthService {
     try {
       return await this.account.deleteSessions();
     } catch (error) {
-      throw error;
+      console.log("Appwrite serive :: logout :: error", error);
     }
   }
 }
