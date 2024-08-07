@@ -8,9 +8,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import { AuthLayout, Login, Signup } from "./components/index.js";
 import AllPost from "./pages/AllPost.jsx";
-import AddPost from "./pages/AllPost.jsx";
-import EditPost from "./pages/AllPost.jsx";
-import Post from "./pages/AllPost.jsx";
+import AddPost from "./pages/AddPost";
+import EditPost from "./pages/EditPost";
+import Post from "./pages/Post";
 
 const router = createBrowserRouter([
   {

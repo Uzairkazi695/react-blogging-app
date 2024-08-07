@@ -12,7 +12,7 @@ export default function PostForm({ post }) {
         title: post?.title || "",
         slug: post?.slug || "",
         content: post?.content || "",
-        status: post?.status || "",
+        status: post?.status || "active",
       },
     });
 
@@ -20,38 +20,46 @@ export default function PostForm({ post }) {
   const userData = useSelector((state) => state.auth.userData);
 
   const submit = async (data) => {
-    if (post) {
-      const file = data.image[0]
-        ? await service.uploadFile(data.image[0])
-        : null;
+    try {
+      if (post) {
+        const file = data.image[0]
+          ? await service.uploadFile(data.image[0])
+          : null;
 
-      if (file) {
-        service.deleteFile(post.featuredImage);
-      }
+        if (file) {
+          await service.deleteFile(post.featuredimage);
+        }
 
-      const dbPost = await service.updatePost(post.$id, {
-        ...data,
-        featuredImage: file ? file.$id : undefined,
-      });
-      if (dbPost) {
-        navigate(`/post/${dbPost.$id}`);
-      }
-    } else {
-      const file = data.image[0]
-        ? await service.uploadFile(data.image[0])
-        : null;
-
-      if (file) {
-        const fileId = file.$id;
-        data.featuredImage = fileId;
-        const dbPost = await service.createPost({
+        const dbPost = await service.updatePost(post.$id, {
           ...data,
-          userId: userData.$id,
+          featuredimage: file ? file.$id : undefined,
         });
-        if (dbPost) {
+
+        if (dbPost && dbPost.$id) {
           navigate(`/post/${dbPost.$id}`);
+        } else {
+          console.error("Post update failed", dbPost);
+        }
+      } else {
+        const file = await service.uploadFile(data.image[0]);
+
+        if (file) {
+          const fileId = file.$id;
+          data.featuredimage = fileId;
+          const dbPost = await service.createPost({
+            ...data,
+            userId: fileId,
+          });
+
+          if (dbPost && dbPost.$id) {
+            navigate(`/post/${dbPost.$id}`);
+          } else {
+            console.error("Post creation failed", dbPost);
+          }
         }
       }
+    } catch (error) {
+      console.error("Error during submit:", error);
     }
   };
 
@@ -75,6 +83,7 @@ export default function PostForm({ post }) {
 
     return () => subscription.unsubscribe();
   }, [watch, slugTransform, setValue]);
+
   return (
     <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
       <div className="w-2/3 px-2">
@@ -113,7 +122,7 @@ export default function PostForm({ post }) {
         {post && (
           <div className="w-full mb-4">
             <img
-              src={service.getFilePreview(post.featuredImage)}
+              src={service.getFilePreview(post.featuredimage)}
               alt={post.title}
               className="rounded-lg"
             />
