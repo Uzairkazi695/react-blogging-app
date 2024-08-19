@@ -20,20 +20,20 @@ function App() {
           dispatch(logout());
         }
       })
-      .catch((err)=> console.log("Error", err)
-      )
+      .catch((err) => console.log("Error", err))
       .finally(() => setLoading(false));
   }, []);
 
   return !loading ? (
-    <div className="min-h-screen flex flex-wrap content-between bg-gray-400">
-    <div className="w-full block">
-      <Header />
-      <main>
-        <Outlet />
-      </main>
-      <Footer />
-    </div></div>
+    <div>
+      <div className="w-full">
+        <Header />
+        <main>
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
+    </div>
   ) : null;
 }
 

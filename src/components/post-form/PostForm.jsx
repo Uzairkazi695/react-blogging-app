@@ -1,11 +1,13 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button, Select, Input, RTE } from "../index";
 import service from "../../appwrite/config";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
+import authService from "../../appwrite/auth";
 
 export default function PostForm({ post }) {
+  const [userId, setUserId] = useState("");
   const { register, handleSubmit, watch, setValue, control, getValues } =
     useForm({
       defaultValues: {
@@ -18,6 +20,12 @@ export default function PostForm({ post }) {
 
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.userData);
+  useEffect(() => {
+    (async () => {
+      const userId = await authService.getCurrentUser();
+      setUserId(userId.$id);
+    })();
+  }, []);
 
   const submit = async (data) => {
     try {
@@ -48,11 +56,11 @@ export default function PostForm({ post }) {
           data.featuredimage = fileId;
           const dbPost = await service.createPost({
             ...data,
-            userId: fileId,
+            userId: userId,
           });
 
           if (dbPost && dbPost.$id) {
-            navigate(`/post/${dbPost.$id}`);
+            navigate(`/`);
           } else {
             console.error("Post creation failed", dbPost);
           }
