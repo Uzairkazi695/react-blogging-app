@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Container, Logo, LogoutBtn } from "../index";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { CiMenuBurger } from "react-icons/ci";
 
 function Header() {
-  const authStatus = useSelector(state => state.auth.status);
-
+  const authStatus = useSelector((state) => state.auth.status);
+  const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
   const navItems = [
@@ -38,7 +39,7 @@ function Header() {
   return (
     <header className="shadow">
       <Container>
-        <nav className="flex">
+        <nav className="flex relative">
           <div className="mr-4">
             <Link to={"/"}>
               <Logo width="70px" />
@@ -63,7 +64,36 @@ function Header() {
               </li>
             )}
           </ul>
+          <span
+            className="md:hidden flex justify-center items-center absolute right-3 top-1/2 text-3xl"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <CiMenuBurger />
+          </span>
         </nav>
+        {isOpen && (
+          <>
+            <ul className="md:flex justify-center items-center md:ml-aut">
+              {navItems.map((item) =>
+                item.active ? (
+                  <li key={item.name}>
+                    <button
+                      onClick={() => navigate(item.slug)}
+                      className="inline-bock px-6 py-2 duration-200 hover:bg-blue-100 rounded-full"
+                    >
+                      {item.name}
+                    </button>
+                  </li>
+                ) : null
+              )}
+              {authStatus && (
+                <li>
+                  <LogoutBtn />
+                </li>
+              )}
+            </ul>
+          </>
+        )}
       </Container>
     </header>
   );
