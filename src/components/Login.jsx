@@ -82,6 +82,8 @@ function Login() {
             </Button>
           </div>
         </form>
+        <div>Demo account: demo@gmail.com</div>
+        <div>Demo password: 12345678</div>
       </div>
     </div>
   );
